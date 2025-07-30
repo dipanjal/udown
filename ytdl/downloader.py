@@ -21,22 +21,27 @@ class Downloader:
         self.out_file = os.path.join(out_dir, self.file_name)
 
     def merge_with_ffmpeg(self):
-        """
-        Merge video and audio using ffmpeg via subprocess.
-        """
-        cmd = [
-            "ffmpeg",
-            "-y",  # Overwrite output file if it exists
-            "-i", str(self.temp_video_file),
-            "-i", str(self.temp_audio_file),
-            "-c:v", "copy",
-            "-c:a", "aac",
-            "-map", "0:v:0",
-            "-map", "1:a:0",
-            self.out_file
-        ]
-        print("Running ffmpeg command:", " ".join(cmd))
-        subprocess.run(cmd, check=True)
+        Utils.merge_with_ffmpeg(
+            video_file=str(self.temp_video_file),
+            audio_file=str(self.temp_audio_file),
+            out_file=self.out_file
+        )
+        # """
+        # Merge video and audio using ffmpeg via subprocess.
+        # """
+        # cmd = [
+        #     "ffmpeg",
+        #     "-y",  # Overwrite output file if it exists
+        #     "-i", str(self.temp_video_file),
+        #     "-i", str(self.temp_audio_file),
+        #     "-c:v", "copy",
+        #     "-c:a", "aac",
+        #     "-map", "0:v:0",
+        #     "-map", "1:a:0",
+        #     self.out_file
+        # ]
+        # print("Running ffmpeg command:", " ".join(cmd))
+        # subprocess.run(cmd, check=True)
 
 
     def download_audio_file(self, file_path: Path):
@@ -60,9 +65,10 @@ class Downloader:
 
     def cleanup_temps(self):
         # Clean up temporary files
-        os.remove(self.temp_video_file)
-        os.remove(self.temp_audio_file)
-        print("Temporary files removed.")
+        if self.temp_video_file.exists():
+            os.remove(self.temp_video_file)
+        if self.temp_audio_file.exists():
+            os.remove(self.temp_audio_file)
 
     def download(self):
         self.download_video_file(self.temp_video_file)
