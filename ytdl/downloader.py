@@ -1,4 +1,5 @@
 import os
+import subprocess
 from pathlib import Path
 
 from pytubefix import YouTube
@@ -8,52 +9,85 @@ from ytdl import ROOT_DIR
 from ytdl.utils import Utils
 
 DOWNLOAD_DIR = ROOT_DIR/"downloads"
+TEMP_DIR = ROOT_DIR/"temp"
 
-def download_audio_file(yt: YouTube, file_path: Path):
-    """Download the best audio stream."""
-    yt.streams.filter(
-        only_audio=True
-    ).order_by("abr").desc().first().download(
-        output_path=str(file_path.parent),
-        filename=file_path.name
-    )
+class Downloader:
+    def __init__(self, url: str, out_dir: str = DOWNLOAD_DIR):
+        self.url = url
+        self.temp_video_file: Path = TEMP_DIR/"temp.mp4"
+        self.temp_audio_file: Path = TEMP_DIR/"temp.m4a"
+        self.yt = YouTube(url, on_progress_callback=on_progress)
+        self.file_name: str = f"{Utils.sanitize_filename(self.yt.title)}.mp4"
+        self.out_file = os.path.join(out_dir, self.file_name)
+
+    def merge_with_ffmpeg(self):
+        """
+        Merge video and audio using ffmpeg via subprocess.
+        """
+        cmd = [
+            "ffmpeg",
+            "-y",  # Overwrite output file if it exists
+            "-i", str(self.temp_video_file),
+            "-i", str(self.temp_audio_file),
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-map", "0:v:0",
+            "-map", "1:a:0",
+            self.out_file
+        ]
+        print("Running ffmpeg command:", " ".join(cmd))
+        subprocess.run(cmd, check=True)
 
 
-def download_video_file(yt: YouTube, file_path: Path):
-    """Download the best video stream."""
-    yt.streams.filter(
-        only_video=True, file_extension="mp4"
-    ).order_by('resolution').desc().first().download(
-        output_path=str(file_path.parent),
-        filename=file_path.name
-    )
+    def download_audio_file(self, file_path: Path):
+        """Download the best audio stream."""
+        self.yt.streams.filter(
+            only_audio=True
+        ).order_by("abr").desc().first().download(
+            output_path=str(file_path.parent),
+            filename=file_path.name
+        )
 
-def main(url: str):
-    """Download video and audio, then merge them with FFmpeg."""
-    yt = YouTube(url, on_progress_callback=on_progress)
-    print(f"Title: {yt.title}")
 
-    sanitized_title = Utils.sanitize_filename(yt.title)
+    def download_video_file(self, file_path: Path):
+        """Download the best video stream."""
+        self.yt.streams.filter(
+            only_video=True, file_extension="mp4"
+        ).order_by('resolution').desc().first().download(
+            output_path=str(file_path.parent),
+            filename=file_path.name
+        )
 
-    temp_video_path = DOWNLOAD_DIR / "temp.mp4"
-    temp_audio_path = DOWNLOAD_DIR / "temp.m4a"
-    output_path = DOWNLOAD_DIR / f"{sanitized_title}.mp4"
+    def cleanup_temps(self):
+        # Clean up temporary files
+        os.remove(self.temp_video_file)
+        os.remove(self.temp_audio_file)
+        print("Temporary files removed.")
 
-    download_video_file(yt, temp_video_path)
-    download_audio_file(yt, temp_audio_path)
+    def download(self):
+        self.download_video_file(self.temp_video_file)
+        self.download_audio_file(self.temp_audio_file)
 
-    # print("Merging Audio and Video Streams")
-    Utils.merge_with_ffmpeg(temp_video_path, temp_audio_path, output_path)
-    print(f"File saved to: {output_path}")
 
-    # Clean up temporary files
-    os.remove(temp_video_path)
-    os.remove(temp_audio_path)
-    print("Temporary files removed.")
+    def start(self):
+        """Download video and audio, then merge them with FFmpeg."""
+        print(f"Title: {self.file_name}")
+        try:
+            self.cleanup_temps()
+            self.download()
+            self.merge_with_ffmpeg()
+        except Exception as e:
+            print(e)
+        finally:
+            self.cleanup_temps()
+        print(f"File saved to: {self.out_file}")
+
+
 
 
 if __name__ == "__main__":
     # CLI Mode coming soon
-    main(
-        url="https://www.youtube.com/watch?v=cjSjlHUmaBU"
+    down = Downloader(
+        url="https://www.youtube.com/watch?v=9JPnN1Z_iSY",
     )
+    down.start()
