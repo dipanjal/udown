@@ -1,0 +1,13 @@
+__pycache__
+.idea/
+.mypy_cache
+/.venv/*
+
+/.coverage
+/htmlcov
+.fleet
+
+**/.DS_Store
+
+downloads
+
