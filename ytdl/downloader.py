@@ -35,10 +35,8 @@ class Downloader:
 
     def cleanup_temps(self):
         # Clean up temporary files
-        if self.temp_video_file.exists():
-            os.remove(self.temp_video_file)
-        if self.temp_audio_file.exists():
-            os.remove(self.temp_audio_file)
+        Utils.delete_file(self.temp_video_file)
+        Utils.delete_file(self.temp_audio_file)
 
     def merge_with_ffmpeg(self) -> str:
         self.profiler.start_timer("merging")
@@ -87,14 +85,13 @@ class Downloader:
             self.out_dir, f"{self.title}.srt"
         )
         try:
-            print(f"Downloading Caption File")
             self.profiler.start_timer('caption')
+            print("Downloading Caption File")
             caption.save_captions(out_file_path)
             self.profiler.end_timer('caption')
         except Exception as e:
             print("Unable to download caption file: ", str(e))
-            if Path(out_file_path).exists():
-                os.remove(out_file_path)
+            Utils.delete_file(out_file_path)
 
     def download(self):
         with concurrent.futures.ThreadPoolExecutor() as executor:
