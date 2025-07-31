@@ -1,10 +1,10 @@
 import concurrent.futures
 import os
 from pathlib import Path
-from typing import Union
 
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
+
 from ytdl.profiler import Profiler
 from ytdl.utils import Utils
 
@@ -134,12 +134,3 @@ class Downloader:
 
         self.profiler.end_overall_timer()
         self.profiler.print_report()
-
-if __name__ == "__main__":
-    # CLI Mode coming soon
-    down = Downloader(
-        url="https://www.youtube.com/watch?v=EaWlpn24eAs",
-        caption=False,
-        debug=True
-    )
-    down.start()

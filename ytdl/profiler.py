@@ -53,3 +53,4 @@ class Profiler:
             if self.debug:
                 print("=" * 50)
                 print(f"Time Saved: {(sum_of_duration - actual_total_duration):.2f} seconds")
+                
