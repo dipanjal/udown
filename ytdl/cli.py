@@ -22,24 +22,20 @@ Examples:
   %(prog)s -c -d https://www.youtube.com/watch?v=dQw4w9WgXcQ
         """
     )
-    
     parser.add_argument(
         "url",
         help="YouTube video URL to download"
     )
-    
     parser.add_argument(
         "-o", "--output",
         dest="output_dir",
         help="Output directory for downloaded files (default: ./downloads)"
     )
-    
     parser.add_argument(
         "-c", "--caption",
         action="store_true",
         help="Download captions/subtitles if available"
     )
-    
     parser.add_argument(
         "-d", "--debug",
         action="store_true",

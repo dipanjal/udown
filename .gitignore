@@ -11,4 +11,6 @@ __pycache__
 
 downloads
 temp
-
+_version.py
+dist
+*.egg-info

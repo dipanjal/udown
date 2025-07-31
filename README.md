@@ -56,7 +56,7 @@ choco install ffmpeg
 ### Basic Usage
 
 ```bash
-you-down <youtube_url>
+you-down -o ~/Downloads <youtube_url>
 ```
 
 ### Advanced Usage
@@ -66,10 +66,10 @@ you-down <youtube_url>
 you-down -o ~/Downloads <youtube_url>
 
 # Download with captions
-you-down -c <youtube_url>
+you-down -c -o ~/Downloads <youtube_url>
 
 # Enable debug mode with detailed timing
-you-down -d <youtube_url>
+you-down -d -o ~/Downloads <youtube_url>
 
 # Combine options
 you-down -o ~/Videos -c -d <youtube_url>
@@ -89,13 +89,13 @@ you-down -o ~/Videos -c -d <youtube_url>
 
 ```bash
 # Download a video
-you-down https://www.youtube.com/watch?v=dQw4w9WgXcQ
+you-down -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 # Download with captions to Downloads folder
 you-down -c -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 # Debug mode to see performance metrics
-you-down -d https://www.youtube.com/watch?v=dQw4w9WgXcQ
+you-down -d -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 ```
 
 ## Performance
@@ -133,7 +133,7 @@ Time Saved: 12.23 seconds
 ```bash
 git clone https://github.com/dipanjal/you-down.git
 cd you-down
-pip install -e ".[dev]"
+make install
 ```
 
 ### Running Tests

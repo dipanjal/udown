@@ -1,4 +1,0 @@
-pytubefix==9.4.1
-
-# Testing framework
-pytest==7.4.0
