@@ -1,5 +1,5 @@
+import concurrent.futures
 import os
-import subprocess
 from pathlib import Path
 
 from pytubefix import YouTube
@@ -43,6 +43,7 @@ class Downloader:
         return out_file_path
 
     def download_audio_file(self, file_path: Path):
+        print("Downloading Audio File")
         """Download the best audio stream."""
         self.yt.streams.filter(
             only_audio=True
@@ -53,6 +54,7 @@ class Downloader:
 
     def download_video_file(self, file_path: Path):
         """Download the best video stream."""
+        print("Downloading Video File")
         self.yt.streams.filter(
             only_video=True, file_extension="mp4"
         ).order_by('resolution').desc().first().download(
@@ -69,8 +71,8 @@ class Downloader:
         out_file_path: str = os.path.join(
             self.out_dir, f"{self.title}.srt"
         )
-        print(f"Downloading Caption to: {out_file_path}")
         try:
+            print(f"Downloading Caption File")
             caption.save_captions(out_file_path)
         except Exception as e:
             print("Unable to download caption file: ", str(e))
@@ -78,10 +80,19 @@ class Downloader:
                 os.remove(out_file_path)
 
     def download(self):
-        self.download_video_file(self.temp_video_file)
-        self.download_audio_file(self.temp_audio_file)
-        if self.caption:
-            self.download_caption_file()
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Submit video and audio download tasks
+            future_video = executor.submit(self.download_video_file, self.temp_video_file)
+            future_audio = executor.submit(self.download_audio_file, self.temp_audio_file)
+            
+            # Submit caption download task if caption is requested
+            futures = [future_video, future_audio]
+            if self.caption:
+                future_caption = executor.submit(self.download_caption_file)
+                futures.append(future_caption)
+            
+            # Wait for all downloads to complete
+            concurrent.futures.wait(futures)
 
 
     def start(self):
@@ -100,7 +111,7 @@ class Downloader:
 if __name__ == "__main__":
     # CLI Mode coming soon
     down = Downloader(
-        url="https://www.youtube.com/watch?v=9JPnN1Z_iSY",
-        caption=True
+        url="https://www.youtube.com/watch?v=EaWlpn24eAs",
+        caption=False
     )
     down.start()
