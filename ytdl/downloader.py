@@ -1,14 +1,14 @@
 import concurrent.futures
 import os
 from pathlib import Path
+from typing import Union
 
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
-
-from ytdl import ROOT_DIR
 from ytdl.profiler import Profiler
 from ytdl.utils import Utils
 
+ROOT_DIR = Path(__file__).parent.parent.resolve()
 DOWNLOAD_DIR = ROOT_DIR/"downloads"
 TEMP_DIR = ROOT_DIR/"temp"
 
@@ -16,7 +16,7 @@ class Downloader:
     def __init__(
         self,
         url: str,
-        out_dir: str = DOWNLOAD_DIR,
+        out_dir: str = str(DOWNLOAD_DIR),
         caption: bool = False,
         debug: bool = False
     ):
@@ -27,11 +27,19 @@ class Downloader:
         self._pre_config()
 
     def _pre_config(self):
-        self.temp_video_file: Path = TEMP_DIR / "temp.mp4"
-        self.temp_audio_file: Path = TEMP_DIR / "temp.m4a"
         self.yt = YouTube(self.url, on_progress_callback=on_progress)
         self.title = Utils.sanitize_filename(self.yt.title)
         self.profiler = Profiler(self.debug)
+
+        # Setting up temp files
+        self.temp_video_file: Path = TEMP_DIR / "temp.mp4"
+        self.temp_audio_file: Path = TEMP_DIR / "temp.m4a"
+
+        # Create out directory if not exists
+        TEMP_DIR.mkdir(exist_ok=True)
+        DOWNLOAD_DIR.mkdir(exist_ok=True)
+        if self.out_dir != str(DOWNLOAD_DIR):
+            Path(self.out_dir).mkdir(exist_ok=True)
 
     def _cleanup_temps(self):
         # Clean up temporary files
