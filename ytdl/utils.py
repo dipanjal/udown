@@ -8,7 +8,7 @@ class Utils:
         return re.sub(r'[\\/*?:"<>|]', "", name)
 
     @staticmethod
-    def merge_with_ffmpeg(video_file: str, audio_file: str, out_file: str):
+    def merge_with_ffmpeg(video_file: str, audio_file: str, out_file: str, debug: bool = False):
         """
         Merge video and audio using ffmpeg via subprocess.
         """
@@ -23,5 +23,6 @@ class Utils:
             "-map", "1:a:0",
             out_file
         ]
-        print("Running ffmpeg command:", " ".join(cmd))
+        if debug:
+            print("Running ffmpeg command:", " ".join(cmd))
         subprocess.run(cmd, check=True)
