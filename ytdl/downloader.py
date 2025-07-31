@@ -26,22 +26,6 @@ class Downloader:
             audio_file=str(self.temp_audio_file),
             out_file=self.out_file
         )
-        # """
-        # Merge video and audio using ffmpeg via subprocess.
-        # """
-        # cmd = [
-        #     "ffmpeg",
-        #     "-y",  # Overwrite output file if it exists
-        #     "-i", str(self.temp_video_file),
-        #     "-i", str(self.temp_audio_file),
-        #     "-c:v", "copy",
-        #     "-c:a", "aac",
-        #     "-map", "0:v:0",
-        #     "-map", "1:a:0",
-        #     self.out_file
-        # ]
-        # print("Running ffmpeg command:", " ".join(cmd))
-        # subprocess.run(cmd, check=True)
 
 
     def download_audio_file(self, file_path: Path):
