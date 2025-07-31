@@ -33,12 +33,12 @@ class Downloader:
         self.title = Utils.sanitize_filename(self.yt.title)
         self.profiler = Profiler(self.debug)
 
-    def cleanup_temps(self):
+    def _cleanup_temps(self):
         # Clean up temporary files
         Utils.delete_file(self.temp_video_file)
         Utils.delete_file(self.temp_audio_file)
 
-    def merge_with_ffmpeg(self) -> str:
+    def _merge_with_ffmpeg(self) -> str:
         self.profiler.start_timer("merging")
         out_file_path: str = os.path.join(
             self.out_dir, f"{self.title}.mp4"
@@ -51,7 +51,7 @@ class Downloader:
         self.profiler.end_timer("merging")
         return out_file_path
 
-    def download_audio_file(self, file_path: Path):
+    def _download_audio_file(self, file_path: Path):
         print("Downloading Audio File")
         """Download the best audio stream."""
         self.profiler.start_timer('audio')
@@ -63,7 +63,7 @@ class Downloader:
         )
         self.profiler.end_timer('audio')
 
-    def download_video_file(self, file_path: Path):
+    def _download_video_file(self, file_path: Path):
         """Download the best video stream."""
         self.profiler.start_timer('video')
         print("Downloading Video File")
@@ -75,7 +75,7 @@ class Downloader:
         )
         self.profiler.end_timer('video')
 
-    def download_caption_file(self):
+    def _download_caption_file(self):
         caption = self.yt.captions.get("a.en", None)
         if not caption:
             print("No caption found")
@@ -93,16 +93,16 @@ class Downloader:
             print("Unable to download caption file: ", str(e))
             Utils.delete_file(out_file_path)
 
-    def download(self):
+    def _download(self):
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit video and audio download tasks
-            future_video = executor.submit(self.download_video_file, self.temp_video_file)
-            future_audio = executor.submit(self.download_audio_file, self.temp_audio_file)
+            future_video = executor.submit(self._download_video_file, self.temp_video_file)
+            future_audio = executor.submit(self._download_audio_file, self.temp_audio_file)
             
             # Submit caption download task if caption is requested
             futures = [future_video, future_audio]
             if self.caption:
-                future_caption = executor.submit(self.download_caption_file)
+                future_caption = executor.submit(self._download_caption_file)
                 futures.append(future_caption)
             
             # Wait for all downloads to complete
@@ -113,17 +113,19 @@ class Downloader:
         """Download video and audio, then merge them with FFmpeg."""
         print(f"Downloading: {self.title}")
         self.profiler.start_overall_timer()
+
         try:
-            self.cleanup_temps()
-            self.download()
-            out_file_path: str = self.merge_with_ffmpeg()
+            self._cleanup_temps()
+            self._download()
+            out_file_path: str = self._merge_with_ffmpeg()
             print(f"Video downloaded successfully to: {out_file_path}")
         except Exception as e:
             print(f"Video downloaded failed due to unknown error: {str(e)}")
         finally:
-            self.cleanup_temps()
-            self.profiler.end_overall_timer()
-            self.profiler.print_report()
+            self._cleanup_temps()
+
+        self.profiler.end_overall_timer()
+        self.profiler.print_report()
 
 if __name__ == "__main__":
     # CLI Mode coming soon
