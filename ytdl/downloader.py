@@ -12,6 +12,7 @@ ROOT_DIR = Path(__file__).parent.parent.resolve()
 DOWNLOAD_DIR = ROOT_DIR/"downloads"
 TEMP_DIR = ROOT_DIR/"temp"
 
+
 class Downloader:
     def __init__(
         self,
@@ -60,8 +61,8 @@ class Downloader:
         return out_file_path
 
     def _download_audio_file(self, file_path: Path):
-        print("Downloading Audio File")
         """Download the best audio stream."""
+        print("Downloading Audio File")
         self.profiler.start_timer('audio')
         self.yt.streams.filter(
             only_audio=True
@@ -73,8 +74,8 @@ class Downloader:
 
     def _download_video_file(self, file_path: Path):
         """Download the best video stream."""
-        self.profiler.start_timer('video')
         print("Downloading Video File")
+        self.profiler.start_timer('video')
         self.yt.streams.filter(
             only_video=True, file_extension="mp4"
         ).order_by('resolution').desc().first().download(
@@ -106,16 +107,15 @@ class Downloader:
             # Submit video and audio download tasks
             future_video = executor.submit(self._download_video_file, self.temp_video_file)
             future_audio = executor.submit(self._download_audio_file, self.temp_audio_file)
-            
+
             # Submit caption download task if caption is requested
             futures = [future_video, future_audio]
             if self.caption:
                 future_caption = executor.submit(self._download_caption_file)
                 futures.append(future_caption)
-            
+
             # Wait for all downloads to complete
             concurrent.futures.wait(futures)
-
 
     def start(self):
         """Download video and audio, then merge them with FFmpeg."""

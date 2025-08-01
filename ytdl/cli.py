@@ -41,13 +41,11 @@ Examples:
         action="store_true",
         help="Enable debug mode with detailed timing information"
     )
-    
     parser.add_argument(
         "--version",
         action="version",
         version="%(prog)s 1.0.0"
     )
-    
     return parser
 
 
@@ -59,7 +57,7 @@ def validate_url(url: str) -> bool:
         "youtu.be",
         "m.youtube.com"
     ]
-    
+
     url_lower = url.lower()
     return any(domain in url_lower for domain in youtube_domains)
 
@@ -68,7 +66,7 @@ def main():
     """Main CLI entry point."""
     parser = create_parser()
     args = parser.parse_args()
-    
+
     # Validate URL
     if not validate_url(args.url):
         print("Error: Please provide a valid YouTube URL")
@@ -77,14 +75,14 @@ def main():
         print("  - https://youtu.be/VIDEO_ID")
         print("  - https://m.youtube.com/watch?v=VIDEO_ID")
         sys.exit(1)
-    
+
     # Set output directory
     output_dir = args.output_dir if args.output_dir else "./downloads"
-    
+
     # Create output directory if it doesn't exist
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    
+
     try:
         # Initialize downloader
         downloader = Downloader(
@@ -93,10 +91,10 @@ def main():
             caption=args.caption,
             debug=args.debug
         )
-        
+
         # Start download
         downloader.start()
-        
+
     except KeyboardInterrupt:
         print("\nDownload cancelled by user")
         sys.exit(1)
