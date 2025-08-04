@@ -10,16 +10,16 @@ from pathlib import Path
 from ytdl.downloader import Downloader
 
 
-def create_parser():
+def create_parser() -> argparse.ArgumentParser:
     """Create and configure the argument parser."""
     parser = argparse.ArgumentParser(
         description="Download YouTube videos with parallel processing",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  %(prog)s https://www.youtube.com/watch?v=dQw4w9WgXcQ
-  %(prog)s -o /path/to/downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
-  %(prog)s -c -d https://www.youtube.com/watch?v=dQw4w9WgXcQ
+            Examples:
+              %(prog)s https://www.youtube.com/watch?v=dQw4w9WgXcQ
+              %(prog)s -o /path/to/downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
+              %(prog)s -c -d https://www.youtube.com/watch?v=dQw4w9WgXcQ
         """
     )
     parser.add_argument(
@@ -62,7 +62,7 @@ def validate_url(url: str) -> bool:
     return any(domain in url_lower for domain in youtube_domains)
 
 
-def main():
+def main() -> None:
     """Main CLI entry point."""
     parser = create_parser()
     args = parser.parse_args()

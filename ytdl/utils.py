@@ -12,7 +12,7 @@ class Utils:
         return re.sub(r'[\\/*?:"<>|]', "", name)
 
     @staticmethod
-    def delete_file(file_path: Union[Path, str]):
+    def delete_file(file_path: Union[Path, str]) -> None:
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
@@ -20,7 +20,12 @@ class Utils:
             os.remove(file_path)
 
     @staticmethod
-    def merge_with_ffmpeg(video_file: str, audio_file: str, out_file: str, debug: bool = False):
+    def merge_with_ffmpeg(
+        video_file: str,
+        audio_file: str,
+        out_file: str,
+        debug: bool = False
+    ) -> None:
         """
         Merge video and audio using ffmpeg via subprocess.
         """

@@ -2,8 +2,8 @@ import concurrent.futures
 import os
 from pathlib import Path
 
-from pytubefix import YouTube
-from pytubefix.cli import on_progress
+from pytubefix import YouTube  # type: ignore
+from pytubefix.cli import on_progress  # type: ignore
 
 from ytdl.profiler import Profiler
 from ytdl.utils import Utils
@@ -27,7 +27,7 @@ class Downloader:
         self.debug = debug
         self._pre_config()
 
-    def _pre_config(self):
+    def _pre_config(self) -> None:
         self.yt = YouTube(self.url, on_progress_callback=on_progress)
         self.title = Utils.sanitize_filename(self.yt.title)
         self.profiler = Profiler(self.debug)
@@ -42,7 +42,7 @@ class Downloader:
         if self.out_dir != str(DOWNLOAD_DIR):
             Path(self.out_dir).mkdir(exist_ok=True)
 
-    def _cleanup_temps(self):
+    def _cleanup_temps(self) -> None:
         # Clean up temporary files
         Utils.delete_file(self.temp_video_file)
         Utils.delete_file(self.temp_audio_file)
@@ -60,7 +60,7 @@ class Downloader:
         self.profiler.end_timer("merging")
         return out_file_path
 
-    def _download_audio_file(self, file_path: Path):
+    def _download_audio_file(self, file_path: Path) -> None:
         """Download the best audio stream."""
         print("Downloading Audio File")
         self.profiler.start_timer('audio')
@@ -72,7 +72,7 @@ class Downloader:
         )
         self.profiler.end_timer('audio')
 
-    def _download_video_file(self, file_path: Path):
+    def _download_video_file(self, file_path: Path) -> None:
         """Download the best video stream."""
         print("Downloading Video File")
         self.profiler.start_timer('video')
@@ -84,7 +84,7 @@ class Downloader:
         )
         self.profiler.end_timer('video')
 
-    def _download_caption_file(self):
+    def _download_caption_file(self) -> None:
         caption = self.yt.captions.get("a.en", None)
         if not caption:
             print("No caption found")
@@ -102,7 +102,7 @@ class Downloader:
             print("Unable to download caption file: ", str(e))
             Utils.delete_file(out_file_path)
 
-    def _download(self):
+    def _download(self) -> None:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit video and audio download tasks
             future_video = executor.submit(self._download_video_file, self.temp_video_file)
@@ -117,7 +117,7 @@ class Downloader:
             # Wait for all downloads to complete
             concurrent.futures.wait(futures)
 
-    def start(self):
+    def start(self) -> None:
         """Download video and audio, then merge them with FFmpeg."""
         print(f"Downloading: {self.title}")
         self.profiler.start_overall_timer()
