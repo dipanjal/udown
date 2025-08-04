@@ -19,7 +19,7 @@ class Downloader:
         url: str,
         out_dir: str = str(DOWNLOAD_DIR),
         caption: bool = False,
-        debug: bool = False
+        debug: bool = False,
     ):
         self.url = url
         self.out_dir = out_dir
@@ -53,7 +53,7 @@ class Downloader:
         Utils.merge_with_ffmpeg(
             video_file=str(self.temp_video_file),
             audio_file=str(self.temp_audio_file),
-            out_file=out_file_path
+            out_file=out_file_path,
         )
         self.profiler.end_timer("merging")
         return out_file_path
@@ -71,7 +71,9 @@ class Downloader:
         """Download the best video stream."""
         print("Downloading Video File")
         self.profiler.start_timer("video")
-        self.yt.streams.filter(only_video=True, file_extension="mp4").order_by("resolution").desc().first().download(
+        self.yt.streams.filter(only_video=True, file_extension="mp4").order_by(
+            "resolution"
+        ).desc().first().download(
             output_path=str(file_path.parent), filename=file_path.name
         )
         self.profiler.end_timer("video")
@@ -95,8 +97,12 @@ class Downloader:
     def _download(self) -> None:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit video and audio download tasks
-            future_video = executor.submit(self._download_video_file, self.temp_video_file)
-            future_audio = executor.submit(self._download_audio_file, self.temp_audio_file)
+            future_video = executor.submit(
+                self._download_video_file, self.temp_video_file
+            )
+            future_audio = executor.submit(
+                self._download_audio_file, self.temp_audio_file
+            )
 
             # Submit caption download task if caption is requested
             futures = [future_video, future_audio]

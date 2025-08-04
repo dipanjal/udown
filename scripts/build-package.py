@@ -11,7 +11,9 @@ def run_command(command, description):
     """Run a command and handle errors."""
     print(f"🔄 {description}...")
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
+        result = subprocess.run(
+            command, shell=True, check=True, capture_output=True, text=True
+        )
         print(f"✅ {description} completed successfully")
         return result
     except subprocess.CalledProcessError as e:
@@ -23,16 +25,19 @@ def run_command(command, description):
 def main():
     """Main build function."""
     print("🚀 Building you-down package...")
-    
+
     # Clean previous builds
     run_command("rm -rf build/ dist/ *.egg-info/", "Cleaning previous builds")
-    
+
+    # Format the code with black
+    run_command("black .", "Formatting code with black")
+
     # Build the package
     run_command("python -m build", "Building package")
-    
+
     # Check the built package
     run_command("python -m twine check dist/*", "Checking package")
-    
+
     print("\n🎉 Build completed successfully!")
     print("\n📦 Package files created in dist/ directory")
     print("\n📤 To upload to PyPI (test):")
@@ -44,4 +49,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()

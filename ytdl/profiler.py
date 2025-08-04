@@ -16,7 +16,9 @@ class Profiler:
         """End timing a specific operation and calculate duration."""
         if name in self.timings:
             self.timings[name]["end"] = time.time()
-            self.timings[name]["duration"] = self.timings[name]["end"] - self.timings[name]["start"]
+            self.timings[name]["duration"] = (
+                self.timings[name]["end"] - self.timings[name]["start"]
+            )
 
     def start_overall_timer(self) -> None:
         """Start the overall process timer."""
@@ -53,4 +55,6 @@ class Profiler:
 
             if self.debug:
                 print("=" * 50)
-                print(f"Time Saved: {(sum_of_duration - actual_total_duration):.2f} seconds")
+                print(
+                    f"Time Saved: {(sum_of_duration - actual_total_duration):.2f} seconds"
+                )
