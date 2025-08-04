@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "you-down"
+dynamic = ["version"]
+description = "A fast YouTube video downloader with parallel processing"
+readme = "README.md"
+license = "MIT"
+authors = [
+    {name = "Dipanjal Maitra", email = "dipanjalmaitra@gmail.com"}
+]
+maintainers = [
+    {name = "Dipanjal Maitra", email = "dipanjalmaitra@gmail.com"}
+]
+keywords = ["youtube", "download", "video", "audio", "parallel", "processing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Internet :: WWW/HTTP",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pytubefix==9.4.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+    "black>=21.0",
+    "flake8>=3.8",
+    "mypy>=0.800",
+    "build>=1.0.0",
+    "twine>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/dipanjal/you-down"
+Documentation = "https://github.com/dipanjal/you-down#readme"
+Repository = "https://github.com/dipanjal/you-down"
+"Bug Tracker" = "https://github.com/dipanjal/you-down/issues"
+
+[project.scripts]
+you-down = "ytdl.cli:main"
+
+[tool.setuptools]
+packages = ["ytdl"]
+
+[tool.setuptools_scm]
+write_to = "ytdl/_version.py"
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

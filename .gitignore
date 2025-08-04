@@ -11,4 +11,8 @@ __pycache__
 
 downloads
 temp
+dist
+*.egg-info
 
+# Generated version file
+ytdl/_version.py
