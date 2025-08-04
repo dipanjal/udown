@@ -20,25 +20,26 @@ class Utils:
             os.remove(file_path)
 
     @staticmethod
-    def merge_with_ffmpeg(
-        video_file: str,
-        audio_file: str,
-        out_file: str,
-        debug: bool = False
-    ) -> None:
+    def merge_with_ffmpeg(video_file: str, audio_file: str, out_file: str, debug: bool = False) -> None:
         """
         Merge video and audio using ffmpeg via subprocess.
         """
         cmd = [
             "ffmpeg",
             "-y",  # Overwrite output file if it exists
-            "-i", video_file,
-            "-i", audio_file,
-            "-c:v", "copy",
-            "-c:a", "aac",
-            "-map", "0:v:0",
-            "-map", "1:a:0",
-            out_file
+            "-i",
+            video_file,
+            "-i",
+            audio_file,
+            "-c:v",
+            "copy",
+            "-c:a",
+            "aac",
+            "-map",
+            "0:v:0",
+            "-map",
+            "1:a:0",
+            out_file,
         ]
         if debug:
             print("Running ffmpeg command:", " ".join(cmd))

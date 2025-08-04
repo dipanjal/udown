@@ -9,8 +9,8 @@ from ytdl.profiler import Profiler
 from ytdl.utils import Utils
 
 ROOT_DIR = Path(__file__).parent.parent.resolve()
-DOWNLOAD_DIR = ROOT_DIR/"downloads"
-TEMP_DIR = ROOT_DIR/"temp"
+DOWNLOAD_DIR = ROOT_DIR / "downloads"
+TEMP_DIR = ROOT_DIR / "temp"
 
 
 class Downloader:
@@ -49,9 +49,7 @@ class Downloader:
 
     def _merge_with_ffmpeg(self) -> str:
         self.profiler.start_timer("merging")
-        out_file_path: str = os.path.join(
-            self.out_dir, f"{self.title}.mp4"
-        )
+        out_file_path: str = os.path.join(self.out_dir, f"{self.title}.mp4")
         Utils.merge_with_ffmpeg(
             video_file=str(self.temp_video_file),
             audio_file=str(self.temp_audio_file),
@@ -63,26 +61,20 @@ class Downloader:
     def _download_audio_file(self, file_path: Path) -> None:
         """Download the best audio stream."""
         print("Downloading Audio File")
-        self.profiler.start_timer('audio')
-        self.yt.streams.filter(
-            only_audio=True
-        ).order_by("abr").desc().first().download(
-            output_path=str(file_path.parent),
-            filename=file_path.name
+        self.profiler.start_timer("audio")
+        self.yt.streams.filter(only_audio=True).order_by("abr").desc().first().download(
+            output_path=str(file_path.parent), filename=file_path.name
         )
-        self.profiler.end_timer('audio')
+        self.profiler.end_timer("audio")
 
     def _download_video_file(self, file_path: Path) -> None:
         """Download the best video stream."""
         print("Downloading Video File")
-        self.profiler.start_timer('video')
-        self.yt.streams.filter(
-            only_video=True, file_extension="mp4"
-        ).order_by('resolution').desc().first().download(
-            output_path=str(file_path.parent),
-            filename=file_path.name
+        self.profiler.start_timer("video")
+        self.yt.streams.filter(only_video=True, file_extension="mp4").order_by("resolution").desc().first().download(
+            output_path=str(file_path.parent), filename=file_path.name
         )
-        self.profiler.end_timer('video')
+        self.profiler.end_timer("video")
 
     def _download_caption_file(self) -> None:
         caption = self.yt.captions.get("a.en", None)
@@ -90,14 +82,12 @@ class Downloader:
             print("No caption found")
             return
 
-        out_file_path: str = os.path.join(
-            self.out_dir, f"{self.title}.srt"
-        )
+        out_file_path: str = os.path.join(self.out_dir, f"{self.title}.srt")
         try:
-            self.profiler.start_timer('caption')
+            self.profiler.start_timer("caption")
             print("Downloading Caption File")
             caption.save_captions(out_file_path)
-            self.profiler.end_timer('caption')
+            self.profiler.end_timer("caption")
         except Exception as e:
             print("Unable to download caption file: ", str(e))
             Utils.delete_file(out_file_path)
