@@ -24,4 +24,10 @@ format:
 quality:
 	./scripts/quality.sh
 
+build:
+	./scripts/build-package.sh
+
+publish-test:
+	./scripts/publish-test.sh
+
 .PHONY: install clean
