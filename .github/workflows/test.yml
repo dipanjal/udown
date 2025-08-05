@@ -70,7 +70,7 @@ jobs:
       run: |
         VERSION_FILE=".app-version"
         CURRENT_VERSION=$(cat $(echo $VERSION_FILE))
-        MAIN_BRANCH_VERSION=$(git show origin/main:$(echo $VERSION_FILE))
+        MAIN_BRANCH_VERSION=$(git show origin/main:.app-version)
         if [[ "$CURRENT_VERSION" == "$MAIN_BRANCH_VERSION" ]]; then
           echo "⚠️ $VERSION_FILE has not been incremented."
           echo "It is still same as main branch version: $MAIN_BRANCH_VERSION"
