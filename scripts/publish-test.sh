@@ -61,12 +61,11 @@ if [[ ! "$answer" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-
 # Ensure the package version is set correctly
 echo "🔍 Checking package version..."
-if ! grep -q "__version__" ytdl/_version.py; then
-    echo "❌ Package version not found in ytdl/_version.py"
-    echo "Please set the version before publishing."
+if [ ! -f ".app-version" ]; then
+    echo "❌ .app-version file not found."
+    echo "Please create a .app-version file with the version number before publishing."
     exit 1
 fi
 
