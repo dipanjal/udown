@@ -52,7 +52,11 @@ jobs:
     - name: Run tests with pytest
       run: |
         source .venv/bin/activate
-        python -m pytest
+        python -m pytest \
+        --cov=ytdl \
+        --cov-branch \
+        --cov-report=xml \
+        --cov-fail-under=40
 
 #    - name: Build package
 #      run: |
