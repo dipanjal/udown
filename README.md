@@ -2,6 +2,8 @@
 
 A fast YouTube video downloader with parallel processing capabilities. Downloads audio and video streams simultaneously for optimal performance.
 
+[![codecov](https://codecov.io/gh/dipanjal/you-down/branch/main/graph/badge.svg)](https://codecov.io/gh/dipanjal/you-down)
+
 ## Features
 
 - ⚡ **Parallel Processing**: Downloads audio and video streams simultaneously

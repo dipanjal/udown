@@ -16,3 +16,4 @@ dist
 
 # Generated version file
 ytdl/_version.py
+build
