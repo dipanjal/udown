@@ -24,10 +24,23 @@ def create_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("url", help="YouTube video URL to download")
     parser.add_argument(
-        "-o", "--output", dest="output_dir", help="Output directory for downloaded files (default: ./downloads)"
+        "-o",
+        "--output",
+        dest="output_dir",
+        help="Output directory for downloaded files (default: ./downloads)",
     )
-    parser.add_argument("-c", "--caption", action="store_true", help="Download captions/subtitles if available")
-    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode with detailed timing information")
+    parser.add_argument(
+        "-c",
+        "--caption",
+        action="store_true",
+        help="Download captions/subtitles if available",
+    )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        help="Enable debug mode with detailed timing information",
+    )
     parser.add_argument("--version", action="version", version="%(prog)s 1.0.0")
     return parser
 
@@ -63,7 +76,12 @@ def main() -> None:
 
     try:
         # Initialize downloader
-        downloader = Downloader(url=args.url, out_dir=str(output_path), caption=args.caption, debug=args.debug)
+        downloader = Downloader(
+            url=args.url,
+            out_dir=str(output_path),
+            caption=args.caption,
+            debug=args.debug,
+        )
 
         # Start download
         downloader.start()

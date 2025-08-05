@@ -3,11 +3,11 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "you-down"
-dynamic = ["version"]
+name = "udown"
+dynamic = ["version", "readme"]
 description = "A fast YouTube video downloader with parallel processing"
-readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Dipanjal Maitra", email = "dipanjalmaitra@gmail.com"}
 ]
@@ -51,13 +51,14 @@ Repository = "https://github.com/dipanjal/you-down"
 "Bug Tracker" = "https://github.com/dipanjal/you-down/issues"
 
 [project.scripts]
-you-down = "ytdl.cli:main"
+udown = "ytdl.cli:main"
 
 [tool.setuptools]
 packages = ["ytdl"]
 
-[tool.setuptools_scm]
-write_to = "ytdl/_version.py"
+[tool.setuptools.dynamic]
+version = {file = ".app-version"}
+readme = {file = "README.md", content-type = "text/markdown"}
 
 [tool.black]
 line-length = 88

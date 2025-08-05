@@ -1,4 +1,4 @@
-# You-Down
+# UDown
 
 A fast YouTube video downloader with parallel processing capabilities. Downloads audio and video streams simultaneously for optimal performance.
 
@@ -18,7 +18,7 @@ A fast YouTube video downloader with parallel processing capabilities. Downloads
 ### From PyPI (Recommended)
 
 ```bash
-pip install you-down
+pip install udown
 ```
 
 ### From Source
@@ -58,23 +58,23 @@ choco install ffmpeg
 ### Basic Usage
 
 ```bash
-you-down -o ~/Downloads <youtube_url>
+udown -o ~/Downloads [youtube_url]
 ```
 
 ### Advanced Usage
 
 ```bash
 # Download to custom directory
-you-down -o ~/Downloads <youtube_url>
+udown -o ~/Downloads [youtube_url]
 
 # Download with captions
-you-down -c -o ~/Downloads <youtube_url>
+udown -c -o ~/Downloads [youtube_url]
 
 # Enable debug mode with detailed timing
-you-down -d -o ~/Downloads <youtube_url>
+udown -d -o ~/Downloads [youtube_url]
 
 # Combine options
-you-down -o ~/Videos -c -d <youtube_url>
+udown -o ~/Videos -c -d [youtube_url]
 ```
 
 ### Command Line Options
@@ -91,13 +91,13 @@ you-down -o ~/Videos -c -d <youtube_url>
 
 ```bash
 # Download a video
-you-down -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
+udown -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 # Download with captions to Downloads folder
-you-down -c -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
+udown -c -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 # Debug mode to see performance metrics
-you-down -d -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
+udown -d -o ~/Downloads https://www.youtube.com/watch?v=dQw4w9WgXcQ
 ```
 
 ## Performance
