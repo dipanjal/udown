@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Fetch main branch
-      run: git fetch origin main:main
+      run: git fetch origin main
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
@@ -32,15 +32,6 @@ jobs:
         python -m venv .venv
         source .venv/bin/activate
         pip install -e ".[dev]"
-
-    # - name: Verify installation
-    #   run: |
-    #     source .venv/bin/activate
-    #     echo "Verifying installation..."
-    #     python -c "import ytdl; print('✅ ytdl package imported successfully')"
-    #     python -c "import pytest; print('✅ pytest available for testing')"
-    #     python -c "import pylint; print('✅ pylint available for linting')"
-    #     python -c "import mypy; print('✅ mypy available for linting')"
     
     - name: Run linters with pylint
       run: |
