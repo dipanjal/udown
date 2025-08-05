@@ -58,23 +58,23 @@ choco install ffmpeg
 ### Basic Usage
 
 ```bash
-you-down -o ~/Downloads <youtube_url>
+you-down -o ~/Downloads [youtube_url]
 ```
 
 ### Advanced Usage
 
 ```bash
 # Download to custom directory
-you-down -o ~/Downloads <youtube_url>
+you-down -o ~/Downloads [youtube_url]
 
 # Download with captions
-you-down -c -o ~/Downloads <youtube_url>
+you-down -c -o ~/Downloads [youtube_url]
 
 # Enable debug mode with detailed timing
-you-down -d -o ~/Downloads <youtube_url>
+you-down -d -o ~/Downloads [youtube_url]
 
 # Combine options
-you-down -o ~/Videos -c -d <youtube_url>
+you-down -o ~/Videos -c -d [youtube_url]
 ```
 
 ### Command Line Options
