@@ -1,6 +1,7 @@
 """
 Tests for the you-down package
 """
+
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -13,6 +14,7 @@ class TestProfiler:
     """
     Test the Profiler class.
     """
+
     def test_profiler_initialization(self) -> None:
         """
         Test profiler initialization.
@@ -52,6 +54,7 @@ class TestUtils:
     """
     Test the Utils class.
     """
+
     def test_sanitize_filename(self) -> None:
         """
         Test filename sanitization.
@@ -87,7 +90,8 @@ class TestDownloader:
     """
     Test the Downloader class.
     """
-    @patch('ytdl.downloader.YouTube')
+
+    @patch("ytdl.downloader.YouTube")
     def test_downloader_initialization(self, mock_youtube: Mock) -> None:
         """
         Test downloader initialization.
@@ -98,9 +102,7 @@ class TestDownloader:
         mock_youtube.return_value = mock_yt
 
         downloader = Downloader(
-            url="https://www.youtube.com/watch?v=test",
-            caption=True,
-            debug=True
+            url="https://www.youtube.com/watch?v=test", caption=True, debug=True
         )
 
         assert downloader.url == "https://www.youtube.com/watch?v=test"

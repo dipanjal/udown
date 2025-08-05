@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "you-down"
-dynamic = ["version"]
+dynamic = ["version", "readme"]
 description = "A fast YouTube video downloader with parallel processing"
-readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Dipanjal Maitra", email = "dipanjalmaitra@gmail.com"}
 ]
@@ -56,8 +56,9 @@ you-down = "ytdl.cli:main"
 [tool.setuptools]
 packages = ["ytdl"]
 
-[tool.setuptools_scm]
-write_to = "ytdl/_version.py"
+[tool.setuptools.dynamic]
+version = {file = ".app-version"}
+readme = {file = "README.md"}
 
 [tool.black]
 line-length = 88

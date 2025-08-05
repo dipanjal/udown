@@ -2,6 +2,7 @@
 
 # Exit on any error
 set -e
+source ./scripts/activate_env.sh
 
 # Build script for you-down package
 
@@ -25,7 +26,10 @@ main() {
   run_command "rm -rf build/ dist/ *.egg-info/" "Cleaning previous builds"
 
   # Format the code with black
-  run_command "black ." "Formatting code with black"
+  run_command "sh ./scripts/format.sh" "Formatting code with black"
+
+  # Check code quality
+  run_command "sh ./scripts/quality.sh" "Checking code quality"
 
   # Build the package
   run_command "python -m build" "Building package"
