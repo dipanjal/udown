@@ -30,7 +30,7 @@ class TestProfiler:
         profiler.start_timer("test")
         assert "test" in profiler.timings
         assert "start" in profiler.timings["test"]
-        
+
         profiler.end_timer("test")
         assert "end" in profiler.timings["test"]
         assert "duration" in profiler.timings["test"]
