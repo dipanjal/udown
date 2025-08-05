@@ -70,6 +70,7 @@ jobs:
         fi
     
     - name: Check App Version increment
+      if: github.ref != 'refs/heads/main'
       run: |
         VERSION_FILE=".app-version"
 
