@@ -14,13 +14,7 @@ TEMP_DIR = ROOT_DIR / "temp"
 
 
 class Downloader:
-    def __init__(
-        self,
-        url: str,
-        out_dir: str = str(DOWNLOAD_DIR),
-        caption: bool = False,
-        debug: bool = False,
-    ):
+    def __init__(self, url: str, out_dir: str = str(DOWNLOAD_DIR), caption: bool = False, debug: bool = False):
         self.url = url
         self.out_dir = out_dir
         self.caption = caption
@@ -51,9 +45,7 @@ class Downloader:
         self.profiler.start_timer("merging")
         out_file_path: str = os.path.join(self.out_dir, f"{self.title}.mp4")
         Utils.merge_with_ffmpeg(
-            video_file=str(self.temp_video_file),
-            audio_file=str(self.temp_audio_file),
-            out_file=out_file_path,
+            video_file=str(self.temp_video_file), audio_file=str(self.temp_audio_file), out_file=out_file_path
         )
         self.profiler.end_timer("merging")
         return out_file_path
@@ -97,12 +89,8 @@ class Downloader:
     def _download(self) -> None:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Submit video and audio download tasks
-            future_video = executor.submit(
-                self._download_video_file, self.temp_video_file
-            )
-            future_audio = executor.submit(
-                self._download_audio_file, self.temp_audio_file
-            )
+            future_video = executor.submit(self._download_video_file, self.temp_video_file)
+            future_audio = executor.submit(self._download_audio_file, self.temp_audio_file)
 
             # Submit caption download task if caption is requested
             futures = [future_video, future_audio]

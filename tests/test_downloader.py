@@ -1,7 +1,7 @@
 """
 Tests for the you-down package
 """
-
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 from ytdl.downloader import Downloader
@@ -10,28 +10,35 @@ from ytdl.utils import Utils
 
 
 class TestProfiler:
-    """Test the Profiler class."""
-
-    def test_profiler_initialization(self):
-        """Test profiler initialization."""
+    """
+    Test the Profiler class.
+    """
+    def test_profiler_initialization(self) -> None:
+        """
+        Test profiler initialization.
+        """
         profiler = Profiler(debug=True)
         assert profiler.debug is True
-        assert profiler.timings == {}
+        assert not profiler.timings
         assert profiler.start_time is None
 
-    def test_timer_functions(self):
-        """Test timer start and end functions."""
+    def test_timer_functions(self) -> None:
+        """
+        Test timer start and end functions.
+        """
         profiler = Profiler()
         profiler.start_timer("test")
         assert "test" in profiler.timings
         assert "start" in profiler.timings["test"]
-
+        
         profiler.end_timer("test")
         assert "end" in profiler.timings["test"]
         assert "duration" in profiler.timings["test"]
 
-    def test_overall_timer(self):
-        """Test overall timer functionality."""
+    def test_overall_timer(self) -> None:
+        """
+        Test overall timer functionality.
+        """
         profiler = Profiler()
         profiler.start_overall_timer()
         assert profiler.start_time is not None
@@ -42,10 +49,13 @@ class TestProfiler:
 
 
 class TestUtils:
-    """Test the Utils class."""
-
-    def test_sanitize_filename(self):
-        """Test filename sanitization."""
+    """
+    Test the Utils class.
+    """
+    def test_sanitize_filename(self) -> None:
+        """
+        Test filename sanitization.
+        """
         # Test with invalid characters
         invalid_name = "file/name\\with*invalid?chars:"
         sanitized = Utils.sanitize_filename(invalid_name)
@@ -56,8 +66,10 @@ class TestUtils:
         sanitized = Utils.sanitize_filename(valid_name)
         assert sanitized == valid_name
 
-    def test_delete_file(self, tmp_path):
-        """Test file deletion."""
+    def test_delete_file(self, tmp_path: Path) -> None:
+        """
+        Test file deletion.
+        """
         # Create a temporary file
         test_file = tmp_path / "test.txt"
         test_file.write_text("test content")
@@ -72,18 +84,23 @@ class TestUtils:
 
 
 class TestDownloader:
-    """Test the Downloader class."""
-
-    @patch("ytdl.downloader.YouTube")
-    def test_downloader_initialization(self, mock_youtube):
-        """Test downloader initialization."""
+    """
+    Test the Downloader class.
+    """
+    @patch('ytdl.downloader.YouTube')
+    def test_downloader_initialization(self, mock_youtube: Mock) -> None:
+        """
+        Test downloader initialization.
+        """
         # Mock YouTube object
         mock_yt = Mock()
         mock_yt.title = "Test Video"
         mock_youtube.return_value = mock_yt
 
         downloader = Downloader(
-            url="https://www.youtube.com/watch?v=test", caption=True, debug=True
+            url="https://www.youtube.com/watch?v=test",
+            caption=True,
+            debug=True
         )
 
         assert downloader.url == "https://www.youtube.com/watch?v=test"

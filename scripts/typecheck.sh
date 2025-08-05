@@ -6,4 +6,4 @@ set -e
 source ./scripts/activate_env.sh
 
 echo "   - mypy type checking..."
-mypy ytdl/ || echo "⚠️  mypy found type issues"
+mypy ytdl/ tests/ || echo "⚠️  mypy found type issues"

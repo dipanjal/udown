@@ -39,12 +39,14 @@ pip install --upgrade pip
 
 # Install the package in development mode with all dependencies
 echo "📦 Installing you-down in development mode..."
-pip install -e ".[dev]"
+pip install ".[dev]"
 
 # Verify installation
-echo "✅ Verifying installation..."
+echo "Verifying installation..."
 python -c "import ytdl; print('✅ ytdl package imported successfully')"
 python -c "import pytest; print('✅ pytest available for testing')"
+python -c "import pylint; print('✅ pylint available for linting')"
+python -c "import mypy; print('✅ mypy available for type checking')"
 
 echo ""
 echo "🎉 Installation completed successfully!"
