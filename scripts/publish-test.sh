@@ -1,12 +1,12 @@
 #!/bin/bash
-# Publish script for you-down package to TestPyPI
+# Publish script for udown package to TestPyPI
 
 # Exit on any error
 set -e
 
 source ./scripts/activate_env.sh
 
-echo "🚀 Publishing you-down package to TestPyPI..."
+echo "🚀 Publishing udown package to TestPyPI..."
 
 # Check if twine is available
 if ! command -v twine &> /dev/null; then
@@ -32,7 +32,7 @@ fi
 
 # Ensure the package is built
 echo "🔍 Ensuring package is built..."
-if [ ! -f "dist/you-down-*.tar.gz" ] && [ !-f "dist/you_down-*.whl" ]; then
+if [ ! -f "dist/udown-*.tar.gz" ] && [ !-f "dist/you_down-*.whl" ]; then
     echo "❌ No package files found in dist/ directory"
     echo "Please build the package first using ./scripts/build-package.sh"
     exit 1
@@ -86,10 +86,10 @@ if [ $? -eq 0 ]; then
    echo "✅ Package successfully published to TestPyPI!"
    echo ""
    echo "🔗 You can view your package at:"
-   echo "   https://test.pypi.org/project/you-down/"
+   echo "   https://test.pypi.org/project/udown/"
    echo ""
    echo "🧪 To install from TestPyPI:"
-   echo "   pip install --index-url https://test.pypi.org/simple/ you-down"
+   echo "   pip install --index-url https://test.pypi.org/simple/ udown"
 else
    echo "❌ Failed to publish to TestPyPI"
    exit 1

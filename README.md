@@ -2,7 +2,7 @@
 
 A fast YouTube video downloader with parallel processing capabilities. Downloads audio and video streams simultaneously for optimal performance.
 
-[![codecov](https://codecov.io/gh/dipanjal/you-down/branch/main/graph/badge.svg)](https://codecov.io/gh/dipanjal/you-down)
+[![codecov](https://codecov.io/gh/dipanjal/udown/branch/main/graph/badge.svg)](https://codecov.io/gh/dipanjal/udown)
 
 ## Features
 
@@ -24,8 +24,8 @@ pip install udown
 ### From Source
 
 ```bash
-git clone https://github.com/dipanjal/you-down.git
-cd you-down
+git clone https://github.com/dipanjal/udown.git
+cd udown
 pip install -e .
 ```
 
@@ -133,8 +133,8 @@ Time Saved: 12.23 seconds
 ### Setup Development Environment
 
 ```bash
-git clone https://github.com/dipanjal/you-down.git
-cd you-down
+git clone https://github.com/dipanjal/udown.git
+cd udown
 make install
 ```
 
@@ -153,7 +153,7 @@ black ytdl/
 ## Architecture
 
 ```
-you-down/
+udown/
 ├── ytdl/
 │   ├── __init__.py      # Package initialization
 │   ├── cli.py           # Command-line interface
@@ -193,5 +193,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - 📧 **Email**: dipanjalmaitra@gmail.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/dipanjalmaitra/you-down/issues)
-- 📖 **Documentation**: [GitHub Wiki](https://github.com/dipanjalmaitra/you-down/wiki)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/dipanjalmaitra/udown/issues)
+- 📖 **Documentation**: [GitHub Wiki](https://github.com/dipanjalmaitra/udown/wiki)

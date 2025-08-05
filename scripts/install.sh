@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-echo "🚀 Setting up you-down development environment..."
+echo "🚀 Setting up udown development environment..."
 
 # Install Python version if pyenv is available
 if command -v pyenv &> /dev/null; then
@@ -38,7 +38,7 @@ echo "⬆️  Upgrading pip..."
 pip install --upgrade pip
 
 # Install the package in development mode with all dependencies
-echo "📦 Installing you-down in development mode..."
+echo "📦 Installing udown in development mode..."
 pip install ".[dev]"
 
 # Verify installation

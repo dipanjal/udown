@@ -4,7 +4,7 @@
 set -e
 source ./scripts/activate_env.sh
 
-# Build script for you-down package
+# Build script for udown package
 
 run_command() {
   command="$1"
@@ -20,7 +20,7 @@ run_command() {
 }
 
 main() {
-  echo "🚀 Building you-down package..."
+  echo "🚀 Building udown package..."
 
   # Clean previous builds
   run_command "rm -rf build/ dist/ *.egg-info/" "Cleaning previous builds"
@@ -49,7 +49,7 @@ main() {
   echo "   python -m twine upload dist/*"
   echo ""
   echo "🧪 To install locally for testing:"
-  echo "   pip install dist/you-down-*.tar.gz"
+  echo "   pip install dist/udown-*.tar.gz"
 }
 
 main

@@ -64,7 +64,7 @@ jobs:
         files: ./coverage.xml
         verbose: true
         token: ${{ secrets.CODECOV_TOKEN }}
-        slug: dipanjal/you-down
+        slug: dipanjal/udown
 
 #    - name: Build package
 #      run: |
