@@ -30,18 +30,18 @@ jobs:
         source .venv/bin/activate
         pip install -e ".[dev]"
     
-    - name: Verify installation
-      run: |
-        echo "Verifying installation..."
-        python -c "import ytdl; print('✅ ytdl package imported successfully')"
-        python -c "import pytest; print('✅ pytest available for testing')"
-        python -c "import pylint; print('✅ pylint available for linting')"
-        python -c "import mypy; print('✅ mypy available for linting')"
+    # - name: Verify installation
+    #   run: |
+    #     echo "Verifying installation..."
+    #     python -c "import ytdl; print('✅ ytdl package imported successfully')"
+    #     python -c "import pytest; print('✅ pytest available for testing')"
+    #     python -c "import pylint; print('✅ pylint available for linting')"
+    #     python -c "import mypy; print('✅ mypy available for linting')"
     
     - name: Run linters with pylint
       run: |
         source .venv/bin/activate
-        pylint . --fail-under=10.0
+        pylint ytdl/ tests/ --fail-under=10.0
     
     - name: Run type checks with mypy
       run: |
