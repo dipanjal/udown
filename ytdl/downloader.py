@@ -63,9 +63,7 @@ class Downloader:
         """Download the best video stream."""
         print("Downloading Video File")
         self.profiler.start_timer("video")
-        self.yt.streams.filter(only_video=True, file_extension="mp4").order_by(
-            "resolution"
-        ).desc().first().download(
+        self.yt.streams.filter(only_video=True, file_extension="mp4").order_by("resolution").desc().first().download(
             output_path=str(file_path.parent), filename=file_path.name
         )
         self.profiler.end_timer("video")
