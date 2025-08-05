@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cleanup script for you-down package build artifacts
+# Cleanup script for udown package build artifacts
 
 echo "🧹 Cleaning build artifacts..."
 

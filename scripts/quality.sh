@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-echo "🧪 Running you-down quality check..."
+echo "🧪 Running udown quality check..."
 
 source ./scripts/activate_env.sh
 

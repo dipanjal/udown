@@ -1,5 +1,5 @@
 """
-Tests for the you-down package
+Tests for the udown package
 """
 
 from pathlib import Path
