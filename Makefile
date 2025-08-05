@@ -27,6 +27,9 @@ quality:
 build:
 	./scripts/build-package.sh
 
+create-tag:
+	./scripts/create-tag.sh
+
 publish-test:
 	./scripts/publish-test.sh
 
