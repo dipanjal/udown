@@ -58,7 +58,7 @@ fi
 echo "🔍 Ensuring package is built..."
 if [ ! -f "dist/udown-*.tar.gz" ] && [ !-f "dist/you_down-*.whl" ]; then
     echo "❌ No package files found in dist/ directory"
-    echo "Please build the package first using ./scripts/build-package.sh"
+    echo "Please build the package first by running 'make build' command"
     exit 1
 fi
 
