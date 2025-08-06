@@ -12,99 +12,79 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Ensure full git history for setuptools_scm
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      
       - name: Install dependencies
-        run: pip install build setuptools_scm
+        run: pip install build twine
+      
       - name: Build package
-        run: python -m build
-      - name: Check built package files
         run: |
-          if [ ! -f "dist/udown-*.tar.gz" ] && [ ! -f "dist/you_down-*.whl" ]; then
+          python -m build
+      
+      - name: Check for .app-version file
+        run: |
+          VERSION_FILE=".app-version"
+          if [ ! -f "$VERSION_FILE" ]; then
+            echo "Error: $VERSION_FILE does not exist."
+            exit 1
+          fi
+      
+      - name: Check package files
+        run: |
+          VERSION=$(cat .app-version)
+          echo "Checking package files for version: $VERSION"
+
+          echo "🔍 Checking built package files..."
+          if [ ! -f "dist/udown-$VERSION.tar.gz" ] && [ ! -f "dist/udown-$VERSION-py3-none-any.whl" ]; then
             echo "❌ No package files found in dist/ directory"
             exit 1
           fi
-
-
-# jobs:
-#   release:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
-
-#       - name: Set up Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: '3.11'
-
-#       - name: Install dependencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install build twine
-
-#       - name: Build package
-#         run: python -m build
-
-#       - name: Check package
-#         run: |
-#           echo "🔍 Checking built package files..."
-#           if [ ! -f "dist/udown-*.tar.gz" ] && [ ! -f "dist/you_down-*.whl" ]; then
-#             echo "❌ No package files found in dist/ directory"
-#             exit 1
-#           fi
-#           echo "✅ Package files found in dist/ directory"
-#           python -m twine check dist/*
-
-#       # - name: Publish to TestPyPI
-#       #   env:
-#       #     TWINE_USERNAME: __token__
-#       #     TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
-#       #   run: |
-#       #     python -m twine upload --repository testpypi dist/* --verbose
-    
-#       - name: Check for .app-version file
-#         run: |
-#           VERSION_FILE=".app-version"
-#           if [ ! -f "$VERSION_FILE" ]; then
-#             echo "Error: $VERSION_FILE does not exist."
-#             exit 1
-#           fi
-
-#       - name: Get version from .app-version
-#         id: vars
-#         run: |
-#           VERSION=$(cat .app-version)
-#           echo "version=v$VERSION" >> $GITHUB_OUTPUT
-#           echo "tag=v$VERSION-beta" >> $GITHUB_OUTPUT
-
-#       - name: Create GitHub Release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#         with:
-#           tag_name: ${{ steps.vars.outputs.tag }}
-#           release_name: Release v${{ steps.vars.outputs.version }}
-#           body: |
-#             ## What's Changed
+          echo "✅ Package files found in dist/ directory"
+          python -m twine check dist/* 
+      
+      - name: Get version from .app-version
+        id: vars
+        run: |
+          VERSION=$(cat .app-version)
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION-beta" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.vars.outputs.tag }}
+          release_name: Release v${{ steps.vars.outputs.version }}
+          body: |
+            ## What's Changed
             
-#             - Parallel audio and video downloads
-#             - Performance profiling and timing reports
-#             - Caption/subtitle support
-#             - Cross-platform compatibility
+            - Parallel audio and video downloads
+            - Performance profiling and timing reports
+            - Caption/subtitle support
+            - Cross-platform compatibility
             
-#             ## Installation
+            ## Installation
             
-#             ```bash
-#             pip install --index-url https://test.pypi.org/simple/ udown
-#             ```
+            ```bash
+            pip install --index-url https://test.pypi.org/simple/ udown
+            ```
             
-#             ## Usage
+            ## Usage
             
-#             ```bash
-#             udown -d ~/Downloads/udown [youtube_url]
-#             ```
-#           draft: false
-#           prerelease: true
+            ```bash
+            udown -d ~/Downloads/udown [youtube_url]
+            ```
+          draft: false
+          prerelease: true
+      
+      # - name: Publish to TestPyPI
+      #   env:
+      #     TWINE_USERNAME: __token__
+      #     TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      #   run: |
+      #     python -m twine upload --repository testpypi dist/* --verbose
