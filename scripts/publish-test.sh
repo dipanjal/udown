@@ -14,6 +14,30 @@ if ! command -v twine &> /dev/null; then
     exit 1
 fi
 
+
+# Check if corresponding tag exists on origin
+echo "🏷️  Checking if tag exists on origin..."
+VERSION=$(cat ".app-version" | tr -d '\n' | tr -d ' ')
+if [[ ! "$VERSION" =~ ^v ]]; then
+    TAG_NAME="v$VERSION"
+else
+    TAG_NAME="$VERSION"
+fi
+
+# Fetch tags from origin
+git fetch origin --tags
+
+# Check if tag exists on origin
+if ! git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
+    echo "❌ Tag $TAG_NAME does not exist on origin."
+    echo "Please create a tag first using 'make create-tag'"
+    exit 1
+fi
+
+echo "✅ Tag $TAG_NAME exists on origin"
+
+
+
 # Check if dist directory exists and has files
 echo "🔍 Checking build directory..."
 if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
@@ -37,15 +61,6 @@ if [ ! -f "dist/udown-*.tar.gz" ] && [ !-f "dist/you_down-*.whl" ]; then
     echo "Please build the package first using ./scripts/build-package.sh"
     exit 1
 fi
-
-
-# echo "   Proceeding to publish..."
-#     do you want to continue? (y/n)"
-#     read -r answer
-#     if [[ ! "$answer" =~ ^[Yy]$ ]]; then
-#         echo "❌ Publishing aborted by user."
-#         exit 0
-#     fi
 
 # Take confirmation before publishing
 echo ""
