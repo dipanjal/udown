@@ -35,12 +35,12 @@ jobs:
           echo "✅ Package files found in dist/ directory"
           python -m twine check dist/*
 
-      - name: Publish to TestPyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        run: |
-          python -m twine upload --repository testpypi dist/* --verbose
+      # - name: Publish to TestPyPI
+      #   env:
+      #     TWINE_USERNAME: __token__
+      #     TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      #   run: |
+      #     python -m twine upload --repository testpypi dist/* --verbose
     
       - name: Check for .app-version file
         run: |
