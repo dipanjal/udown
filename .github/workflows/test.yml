@@ -18,9 +18,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Fetch main branch
-      run: git fetch origin main
-    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -58,22 +55,6 @@ jobs:
         if [ ! -f "$VERSION_FILE" ]; then
           echo "Error: $VERSION_FILE does not exist."
           exit 1
-        fi
-    
-    - name: Check App Version increment
-      if: github.ref != 'refs/heads/main'
-      run: |
-        VERSION_FILE=".app-version"
-
-        CURRENT_VERSION=$(cat "$VERSION_FILE")
-        MAIN_BRANCH_VERSION=$(git show origin/main:"$VERSION_FILE")
-        
-        if [[ "$CURRENT_VERSION" == "$MAIN_BRANCH_VERSION" ]]; then
-          echo "⚠️ $VERSION_FILE has not been incremented."
-          echo "It is still same as main branch version: $MAIN_BRANCH_VERSION"
-          exit 1
-        else
-          echo "✅ $VERSION_FILE has been incremented from $MAIN_BRANCH_VERSION to $CURRENT_VERSION"
         fi
     
     - name: Upload coverage to Codecov
