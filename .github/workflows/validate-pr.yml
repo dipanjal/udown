@@ -94,6 +94,7 @@ jobs:
           }
 
           const prBody = context.payload.pull_request.body || '';
+          core.setOutput('pr_body', prBody);
           const validation = validateChangelogEntry(prBody);
           core.setOutput('result', validation);
 
@@ -110,13 +111,5 @@ jobs:
       # if: steps.desc-validator.outputs.result.isValid == 'true' && (startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/'))
       run: |
         echo "Version check will be performed here if the PR description is valid."
+        echo "PR Description: ${{ steps.desc-validator.outputs.pr_body }}"
         echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
-
-
-        # echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
-        # if [[ "${{ steps.desc-validator.outputs.result }}" != "true" ]]; then
-        #   echo "Changelog validation failed. Please check the PR description."
-        #   exit 1
-        # else
-        #   echo "Changelog validation passed."
-        # fi
