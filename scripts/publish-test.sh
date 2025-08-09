@@ -8,9 +8,19 @@ source ./scripts/activate_env.sh
 
 echo "🚀 Publishing udown package to TestPyPI..."
 
+
 # Check if twine is available
 if ! command -v twine &> /dev/null; then
     echo "❌ twine is not installed. Please install it with: pip install twine"
+    exit 1
+fi
+
+
+# Ensure the package version is set correctly
+echo "🔍 Checking package version..."
+if [ ! -f ".app-version" ]; then
+    echo "❌ .app-version file not found."
+    echo "Please create a .app-version file with the version number before publishing."
     exit 1
 fi
 
@@ -24,6 +34,7 @@ else
     TAG_NAME="$VERSION"
 fi
 
+
 # Fetch tags from origin
 git fetch origin --tags
 
@@ -33,7 +44,6 @@ if ! git ls-remote --tags origin | grep -q "refs/tags/$TAG_NAME$"; then
     echo "Please create a tag first using 'make create-tag'"
     exit 1
 fi
-
 echo "✅ Tag $TAG_NAME exists on origin"
 
 
@@ -56,11 +66,13 @@ fi
 
 # Ensure the package is built
 echo "🔍 Ensuring package is built..."
-if [ ! -f "dist/udown-*.tar.gz" ] && [ !-f "dist/you_down-*.whl" ]; then
+if [ ! -f "dist/udown-$VERSION.tar.gz" ] && [ !-f "dist/udown-$VERSION-py3-none-any.whl" ]; then
     echo "❌ No package files found in dist/ directory"
-    echo "Please build the package first using ./scripts/build-package.sh"
+    echo "Please build the package first using 'make build' command"
     exit 1
 fi
+echo "✅ Package files found in dist/ directory"
+
 
 # Take confirmation before publishing
 echo ""
@@ -76,18 +88,10 @@ if [[ ! "$answer" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Ensure the package version is set correctly
-echo "🔍 Checking package version..."
-if [ ! -f ".app-version" ]; then
-    echo "❌ .app-version file not found."
-    echo "Please create a .app-version file with the version number before publishing."
-    exit 1
-fi
 
 # Check package before uploading
 echo "🔍 Checking package integrity..."
 python -m twine check dist/*
-
 if [ $? -ne 0 ]; then
     echo "❌ Package check failed. Please fix the issues before publishing."
     exit 1
