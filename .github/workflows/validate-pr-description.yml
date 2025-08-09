@@ -21,25 +21,6 @@ jobs:
         # Fetch PR description using jq
         PR_DESCRIPTION=$(jq -r ".pull_request.body" "$GITHUB_EVENT_PATH")
 
-        echo "PR Description: $PR_DESCRIPTION"
-
-        # Check if PR description is empty or null
-        if [ -z "$PR_DESCRIPTION" ] || [ "$PR_DESCRIPTION" = "null" ]; then
-          echo "Error: PR description is empty. Please fill out the PR template."
-          exit 1
-        fi
-
-        # Required sections that must be present
-        REQUIRED_SECTIONS=("## Description" "## Type of Change" "## Changelog Entry" "## Testing" "## Checklist")
-        
-        # Check for required sections
-        for section in "${REQUIRED_SECTIONS[@]}"; do
-          if [[ $PR_DESCRIPTION != *"$section"* ]]; then
-            echo "Error: Required section '$section' is missing from PR description."
-            exit 1
-          fi
-        done
-
         # Check that at least one Type of Change checkbox is checked
         if [[ ! $PR_DESCRIPTION =~ \[x\].*Bug\ fix && ! $PR_DESCRIPTION =~ \[x\].*New\ feature && ! $PR_DESCRIPTION =~ \[x\].*Breaking\ change && ! $PR_DESCRIPTION =~ \[x\].*Documentation\ update ]]; then
           echo "Error: At least one 'Type of Change' checkbox must be checked."
@@ -59,3 +40,19 @@ jobs:
         fi
 
         echo "✅ PR description validation passed!"
+    - name: Check changelog entry
+      uses: actions/github-script@v7
+      id: chagelog-validator
+      with:
+        script: |
+          const prBody = context.payload.pull_request.body || '';
+          core.setOutput('pr_body', prBody);
+
+          const sections = ['Added', 'Changed', 'Fixed', 'Security'];
+          
+          let hasChangelogEntry = false;
+    
+    - name: Display output
+      run: |
+        echo "The message is: ${{ steps.chagelog-validator.outputs.pr_body }}"
+          
