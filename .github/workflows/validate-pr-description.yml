@@ -45,12 +45,94 @@ jobs:
       id: chagelog-validator
       with:
         script: |
+          function validateChangelogEntry(prBody) {
+            // Extract the type of change (look for checked boxes)
+            const isBugFix = /- \[x\] Bug fix/.test(prBody);
+            const isNewFeature = /- \[x\] New feature/.test(prBody);
+            const isBreakingChange = /- \[x\] Breaking change/.test(prBody);
+            const isDocUpdate = /- \[x\] Documentation update/.test(prBody);
+
+            // Extract changelog sections
+            const extractSection = (sectionName) => {
+              const regex = new RegExp(`### ${sectionName}\\s*\\n([\\s\\S]*?)(?=### |## |$)`, 'i');
+              const match = prBody.match(regex);
+              
+              if (match && match[1]) {
+                const entries = match[1]
+                  .split('\n')
+                  .map(line => line.trim())
+                  .filter(line => 
+                    line && 
+                    line !== '-' && 
+                    !line.startsWith('<!--') && 
+                    !line.startsWith('-->') &&
+                    line.length > 1
+                  );
+                
+                return entries.length > 0 ? entries : [];
+              }
+              
+              return [];
+            };
+
+            const addedEntries = extractSection('Added');
+            const changedEntries = extractSection('Changed');
+            const fixedEntries = extractSection('Fixed');
+            const securityEntries = extractSection('Security');
+
+            const errors = [];
+
+            if (isBugFix && fixedEntries.length === 0) {
+              errors.push('Bug fix selected but "Fixed" section is empty. Please describe what was fixed.');
+            }
+
+            if (isNewFeature && addedEntries.length === 0) {
+              errors.push('New feature selected but "Added" section is empty. Please describe what was added.');
+            }
+
+            if (isBreakingChange && changedEntries.length === 0) {
+              errors.push('Breaking change selected but "Changed" section is empty. Please describe what changed.');
+            }
+
+            const hasAnyChangelogEntry = addedEntries.length > 0 || 
+                                       changedEntries.length > 0 || 
+                                       fixedEntries.length > 0 || 
+                                       securityEntries.length > 0;
+
+            if (!isDocUpdate && !isBugFix && !isNewFeature && !isBreakingChange && !hasAnyChangelogEntry) {
+              errors.push('Please select a type of change and provide appropriate changelog entries.');
+            }
+
+            return {
+              isValid: errors.length === 0,
+              errors: errors,
+              changeTypes: {
+                bugFix: isBugFix,
+                newFeature: isNewFeature,
+                breakingChange: isBreakingChange,
+                docUpdate: isDocUpdate
+              },
+              changelogEntries: {
+                added: addedEntries,
+                changed: changedEntries,
+                fixed: fixedEntries,
+                security: securityEntries
+              }
+            };
+          }
+
           const prBody = context.payload.pull_request.body || '';
           core.setOutput('pr_body', prBody);
+          const validation = validateChangelogEntry(prBody);
 
-          const sections = ['Added', 'Changed', 'Fixed', 'Security'];
-          
-          let hasChangelogEntry = false;
+          if (!validation.isValid) {
+            const errorMessage = validation.errors.join('\n- ');
+            core.setFailed(`Changelog validation failed:\n- ${errorMessage}`);
+          } else {
+            console.log('Changelog validation passed!');
+            console.log('Change types:', validation.changeTypes);
+            console.log('Changelog entries:', validation.changelogEntries);
+          }
     
     - name: Display output
       run: |
