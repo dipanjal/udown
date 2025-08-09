@@ -26,26 +26,26 @@ jobs:
           fi
       
       - name: Fetch Main Branch Version
-        id: main-branch
+        id: versions
         run: |
           git fetch origin main
           MAIN_BRANCH_VERSION=$(git show origin/main:.app-version)
-          echo "version=$MAIN_BRANCH_VERSION" >> $GITHUB_OUTPUT
+          CURRENT_VERSION=$(cat .app-version)
+          echo "main=$MAIN_BRANCH_VERSION" >> $GITHUB_OUTPUT
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
-      # - name: Check App Version increment
-      #   id: current-branch
-      #   run: |
-      #     VERSION_FILE=".app-version"
-      #     CURRENT_VERSION=$(cat "$VERSION_FILE")
-      #     echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-
-      #     MAIN_BRANCH_VERSION=${{steps.main-branch.outputs.version}}
-      #     echo "Main branch version: $MAIN_BRANCH_VERSION"
+      - name: Check App Version increment
+        run: |
+          CURRENT_VERSION=${{ steps.versions.outputs.current }}
+          MAIN_BRANCH_VERSION=${{ steps.versions.outputs.main }}
           
-      #     if [[ "$CURRENT_VERSION" == "$MAIN_BRANCH_VERSION" ]]; then
-      #       echo "⚠️ $VERSION_FILE has not been incremented."
-      #       echo "It is still same as main branch version: $MAIN_BRANCH_VERSION"
-      #       exit 1
-      #     else
-      #       echo "✅ $VERSION_FILE has been incremented from $MAIN_BRANCH_VERSION to $CURRENT_VERSION"
-      #     fi
+          echo "Main branch version: $MAIN_BRANCH_VERSION"
+          echo "Current branch version: $CURRENT_VERSION"
+          
+          if [[ "$CURRENT_VERSION" == "$MAIN_BRANCH_VERSION" ]]; then
+            echo "⚠️ $VERSION_FILE has not been incremented."
+            echo "It is still same as main branch version: $MAIN_BRANCH_VERSION"
+            exit 1
+          else
+            echo "✅ $VERSION_FILE has been incremented from $MAIN_BRANCH_VERSION to $CURRENT_VERSION"
+          fi
