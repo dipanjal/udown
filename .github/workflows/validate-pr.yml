@@ -1,11 +1,11 @@
-name: PR Description Validator
+name: PR Content Validator
 
 on:
   pull_request:
     types: [opened, synchronize, edited, reopened]
 
 jobs:
-  validate-pr-description:
+  validate-pr:
     name: Validate PR Description
     runs-on: ubuntu-latest
     steps:
@@ -14,7 +14,7 @@ jobs:
 
     - name: Check PR description
       uses: actions/github-script@v7
-      id: chagelog-validator
+      id: desc-validator
       with:
         script: |
           function validateChangelogEntry(prBody) {
@@ -95,6 +95,7 @@ jobs:
 
           const prBody = context.payload.pull_request.body || '';
           const validation = validateChangelogEntry(prBody);
+          core.setOutput('result', validation);
 
           if (!validation.isValid) {
             const errorMessage = validation.errors.join('\n- ');
@@ -104,3 +105,14 @@ jobs:
             console.log('Change types:', validation.changeTypes);
             console.log('Changelog entries:', validation.changelogEntries);
           }
+    
+    - name: Version Check
+      # if: steps.desc-validator.outputs.result.isValid == 'true' && (startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/'))
+      run: |
+        echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
+        if [ "${{ steps.desc-validator.outputs.result }}" != "true" ]; then
+          echo "Changelog validation failed. Please check the PR description."
+          exit 1
+        else
+          echo "Changelog validation passed."
+        fi
