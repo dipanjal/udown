@@ -23,10 +23,39 @@ jobs:
 
         echo "PR Description: $PR_DESCRIPTION"
 
-        # KEYWORD="REQUIRED_KEYWORD"
+        # Check if PR description is empty or null
+        if [ -z "$PR_DESCRIPTION" ] || [ "$PR_DESCRIPTION" = "null" ]; then
+          echo "Error: PR description is empty. Please fill out the PR template."
+          exit 1
+        fi
 
-        # # Check for the required keyword in the PR description
-        # if [[ $PR_DESCRIPTION != *"$KEYWORD"* ]]; then
-        #   echo "PR description does not contain the required keyword."
-        #   exit 1
-        # fi
+        # Required sections that must be present
+        REQUIRED_SECTIONS=("## Description" "## Type of Change" "## Changelog Entry" "## Testing" "## Checklist")
+        
+        # Check for required sections
+        for section in "${REQUIRED_SECTIONS[@]}"; do
+          if [[ $PR_DESCRIPTION != *"$section"* ]]; then
+            echo "Error: Required section '$section' is missing from PR description."
+            exit 1
+          fi
+        done
+
+        # Check that at least one Type of Change checkbox is checked
+        if [[ ! $PR_DESCRIPTION =~ \[x\].*Bug\ fix && ! $PR_DESCRIPTION =~ \[x\].*New\ feature && ! $PR_DESCRIPTION =~ \[x\].*Breaking\ change && ! $PR_DESCRIPTION =~ \[x\].*Documentation\ update ]]; then
+          echo "Error: At least one 'Type of Change' checkbox must be checked."
+          exit 1
+        fi
+
+        # Check that at least one Testing checkbox is checked
+        if [[ ! $PR_DESCRIPTION =~ \[x\].*I\ have\ tested\ these\ changes\ locally && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ added\ tests ]]; then
+          echo "Error: At least one 'Testing' checkbox must be checked."
+          exit 1
+        fi
+
+        # Check that at least one Checklist item is checked
+        if [[ ! $PR_DESCRIPTION =~ \[x\].*My\ code\ follows\ the\ code\ style && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ updated\ the\ documentation && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ filled\ out\ the\ changelog ]]; then
+          echo "Error: At least one 'Checklist' item must be checked."
+          exit 1
+        fi
+
+        echo "✅ PR description validation passed!"
