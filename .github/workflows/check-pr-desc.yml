@@ -13,6 +13,7 @@ jobs:
       with:
         script: |
           const prBody = context.payload.pull_request.body || '';
+          console.log(`PR Body: ${prBody}`);
           const sections = ['Added', 'Changed', 'Fixed', 'Security'];
           
           let hasChangelogEntry = false;
