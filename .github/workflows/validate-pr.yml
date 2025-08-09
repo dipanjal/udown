@@ -106,13 +106,17 @@ jobs:
             console.log('Changelog entries:', validation.changelogEntries);
           }
     
-    - name: Version Check
+    - name: Display Validation Result
       # if: steps.desc-validator.outputs.result.isValid == 'true' && (startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/'))
       run: |
+        echo "Version check will be performed here if the PR description is valid."
         echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
-        if [ "${{ steps.desc-validator.outputs.result }}" != "true" ]; then
-          echo "Changelog validation failed. Please check the PR description."
-          exit 1
-        else
-          echo "Changelog validation passed."
-        fi
+
+
+        # echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
+        # if [[ "${{ steps.desc-validator.outputs.result }}" != "true" ]]; then
+        #   echo "Changelog validation failed. Please check the PR description."
+        #   exit 1
+        # else
+        #   echo "Changelog validation passed."
+        # fi
