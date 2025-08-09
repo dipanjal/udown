@@ -1,4 +1,3 @@
-
 name: PR Description Validator
 
 on:
@@ -13,34 +12,7 @@ jobs:
     - name: Set up workspace
       uses: actions/checkout@v2
 
-    - name: Validate PR Description
-      run: |
-        # Ensure jq is installed
-        sudo apt-get install jq
-
-        # Fetch PR description using jq
-        PR_DESCRIPTION=$(jq -r ".pull_request.body" "$GITHUB_EVENT_PATH")
-
-        # Check that at least one Type of Change checkbox is checked
-        if [[ ! $PR_DESCRIPTION =~ \[x\].*Bug\ fix && ! $PR_DESCRIPTION =~ \[x\].*New\ feature && ! $PR_DESCRIPTION =~ \[x\].*Breaking\ change && ! $PR_DESCRIPTION =~ \[x\].*Documentation\ update ]]; then
-          echo "Error: At least one 'Type of Change' checkbox must be checked."
-          exit 1
-        fi
-
-        # Check that at least one Testing checkbox is checked
-        if [[ ! $PR_DESCRIPTION =~ \[x\].*I\ have\ tested\ these\ changes\ locally && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ added\ tests ]]; then
-          echo "Error: At least one 'Testing' checkbox must be checked."
-          exit 1
-        fi
-
-        # Check that at least one Checklist item is checked
-        if [[ ! $PR_DESCRIPTION =~ \[x\].*My\ code\ follows\ the\ code\ style && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ updated\ the\ documentation && ! $PR_DESCRIPTION =~ \[x\].*I\ have\ filled\ out\ the\ changelog ]]; then
-          echo "Error: At least one 'Checklist' item must be checked."
-          exit 1
-        fi
-
-        echo "✅ PR description validation passed!"
-    - name: Check changelog entry
+    - name: Check PR description
       uses: actions/github-script@v7
       id: chagelog-validator
       with:
@@ -122,7 +94,6 @@ jobs:
           }
 
           const prBody = context.payload.pull_request.body || '';
-          core.setOutput('pr_body', prBody);
           const validation = validateChangelogEntry(prBody);
 
           if (!validation.isValid) {
@@ -133,8 +104,3 @@ jobs:
             console.log('Change types:', validation.changeTypes);
             console.log('Changelog entries:', validation.changelogEntries);
           }
-    
-    - name: Display output
-      run: |
-        echo "The message is: ${{ steps.chagelog-validator.outputs.pr_body }}"
-          
