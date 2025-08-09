@@ -94,9 +94,18 @@ jobs:
           }
 
           const prBody = context.payload.pull_request.body || '';
-          core.setOutput('pr_body', prBody);
           const validation = validateChangelogEntry(prBody);
-          core.setOutput('result', validation);
+          
+          // Set individual outputs for easier access
+          core.setOutput('pr_body', prBody);
+          core.setOutput('is_valid', validation.isValid);
+          core.setOutput('errors', validation.errors.join(', '));
+          core.setOutput('is_bug_fix', validation.changeTypes.bugFix);
+          core.setOutput('is_new_feature', validation.changeTypes.newFeature);
+          core.setOutput('is_breaking_change', validation.changeTypes.breakingChange);
+          core.setOutput('is_doc_updated', validation.changeTypes.docUpdate);
+          core.setOutput('validation_json', JSON.stringify(validation));
+
 
           if (!validation.isValid) {
             const errorMessage = validation.errors.join('\n- ');
@@ -108,8 +117,15 @@ jobs:
           }
     
     - name: Display Validation Result
-      # if: steps.desc-validator.outputs.result.isValid == 'true' && (startsWith(github.ref, 'refs/heads/feature/') || startsWith(github.ref, 'refs/heads/bugfix/'))
       run: |
-        echo "Version check will be performed here if the PR description is valid."
-        echo "PR Description: ${{ steps.desc-validator.outputs.pr_body }}"
-        echo "Validation Result: ${{ steps.desc-validator.outputs.result }}"
+        echo "=== Validation Results ==="
+        echo "Is Valid: ${{ steps.desc-validator.outputs.is_valid }}"
+        echo "Errors: ${{ steps.desc-validator.outputs.errors }}"
+        echo "Bug Fix: ${{ steps.desc-validator.outputs.is_bug_fix }}"
+        echo "New Feature: ${{ steps.desc-validator.outputs.is_new_feature }}"
+        echo "Breaking Change: ${{ steps.desc-validator.outputs.is_breaking_change }}"
+        echo "Documentation Update: ${{ steps.desc-validator.outputs.is_doc_updated }}"
+        echo ""
+        echo "Full Validation JSON:"
+        echo '${{ steps.desc-validator.outputs.validation_json }}' | jq '.' || echo '${{ steps.desc-validator.outputs.validation_json }}'
+    
