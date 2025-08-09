@@ -1,0 +1,145 @@
+name: PR Content Validator
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+
+jobs:
+  validate-pr:
+    name: Validate PR Description
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up workspace
+      uses: actions/checkout@v2
+
+    - name: Check PR description
+      uses: actions/github-script@v7
+      id: desc-validator
+      with:
+        script: |
+          function validateChangelogEntry(prBody) {
+            // Extract the type of change (look for checked boxes)
+            const isBugFix = /- \[x\] Bug fix/.test(prBody);
+            const isNewFeature = /- \[x\] New feature/.test(prBody);
+            const isBreakingChange = /- \[x\] Breaking change/.test(prBody);
+            const isDocUpdate = /- \[x\] Documentation update/.test(prBody);
+
+            // Extract changelog sections
+            const extractSection = (sectionName) => {
+              const regex = new RegExp(`### ${sectionName}\\s*\\n([\\s\\S]*?)(?=### |## |$)`, 'i');
+              const match = prBody.match(regex);
+              
+              if (match && match[1]) {
+                const entries = match[1]
+                  .split('\n')
+                  .map(line => line.trim())
+                  .filter(line => 
+                    line && 
+                    line !== '-' && 
+                    !line.startsWith('<!--') && 
+                    !line.startsWith('-->') &&
+                    line.length > 1
+                  );
+                
+                return entries.length > 0 ? entries : [];
+              }
+              
+              return [];
+            };
+
+            const addedEntries = extractSection('Added');
+            const changedEntries = extractSection('Changed');
+            const fixedEntries = extractSection('Fixed');
+            const securityEntries = extractSection('Security');
+
+            const errors = [];
+
+            if (isBugFix && fixedEntries.length === 0) {
+              errors.push('Bug fix selected but "Fixed" section is empty. Please describe what was fixed.');
+            }
+
+            if (isNewFeature && addedEntries.length === 0) {
+              errors.push('New feature selected but "Added" section is empty. Please describe what was added.');
+            }
+
+            if (isBreakingChange && changedEntries.length === 0) {
+              errors.push('Breaking change selected but "Changed" section is empty. Please describe what changed.');
+            }
+
+            const hasAnyChangelogEntry = addedEntries.length > 0 || 
+                                       changedEntries.length > 0 || 
+                                       fixedEntries.length > 0 || 
+                                       securityEntries.length > 0;
+
+            if (!isDocUpdate && !isBugFix && !isNewFeature && !isBreakingChange && !hasAnyChangelogEntry) {
+              errors.push('Please select a type of change and provide appropriate changelog entries.');
+            }
+
+            return {
+              isValid: errors.length === 0,
+              errors: errors,
+              changeTypes: {
+                bugFix: isBugFix,
+                newFeature: isNewFeature,
+                breakingChange: isBreakingChange,
+                docUpdate: isDocUpdate
+              },
+              changelogEntries: {
+                added: addedEntries,
+                changed: changedEntries,
+                fixed: fixedEntries,
+                security: securityEntries
+              }
+            };
+          }
+
+          const prBody = context.payload.pull_request.body || '';
+          const validation = validateChangelogEntry(prBody);
+          
+          // Set individual outputs for easier access
+          core.setOutput('pr_body', prBody);
+          core.setOutput('is_valid', validation.isValid);
+          core.setOutput('errors', validation.errors.join(', '));
+          core.setOutput('is_bug_fix', validation.changeTypes.bugFix);
+          core.setOutput('is_new_feature', validation.changeTypes.newFeature);
+          core.setOutput('is_breaking_change', validation.changeTypes.breakingChange);
+          core.setOutput('is_doc_updated', validation.changeTypes.docUpdate);
+          core.setOutput('validation_json', JSON.stringify(validation));
+
+
+          if (!validation.isValid) {
+            const errorMessage = validation.errors.join('\n- ');
+            core.setFailed(`Changelog validation failed:\n- ${errorMessage}`);
+          } else {
+            console.log('Changelog validation passed!');
+            console.log('Change types:', validation.changeTypes);
+            console.log('Changelog entries:', validation.changelogEntries);
+          }
+    
+    # - name: Validate Sementic Version
+    #   run: |
+    #     echo "=== Validation Results ==="
+    #     echo "Is Valid: ${{ steps.desc-validator.outputs.is_valid }}"
+    #     echo "Errors: ${{ steps.desc-validator.outputs.errors }}"
+    #     echo "Bug Fix: ${{ steps.desc-validator.outputs.is_bug_fix }}"
+    #     echo "New Feature: ${{ steps.desc-validator.outputs.is_new_feature }}"
+    #     echo "Breaking Change: ${{ steps.desc-validator.outputs.is_breaking_change }}"
+    #     echo "Documentation Update: ${{ steps.desc-validator.outputs.is_doc_updated }}"
+    #     echo ""
+    #     echo "Full Validation JSON:"
+    #     echo '${{ steps.desc-validator.outputs.validation_json }}' | jq '.' || echo '${{ steps.desc-validator.outputs.validation_json }}'
+    #     echo "=========================="
+        
+    #     MAIN_VERSION=${{ steps.versions.outputs.main }}
+    #     CURRENT_VERSION=${{ steps.versions.outputs.current }}
+
+    #     if [[ "${{ steps.desc-validator.outputs.is_bug_fix }}" != "true" ]]; then
+    #       echo "Check Patch Update Version"
+    #       MAIN_PATCH=$(echo "$MAIN_VERSION" | cut -d '.' -f 3)
+    #       CURRENT_PATCH=$(echo "$CURRENT_VERSION" | cut -d '.' -f 3)
+    #       if [[ "$CURRENT_PATCH" -le "$MAIN_PATCH" ]]; then
+    #         echo "Error: You must increment the patch version in .app-version file."
+    #         exit 1
+    #       fi
+    #     fi
+    
