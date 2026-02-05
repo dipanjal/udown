@@ -30,7 +30,10 @@ build:
 create-tag:
 	./scripts/create-tag.sh
 
-publish-test:
-	./scripts/publish-test.sh
+publish-test: clean
+	PUBLISH_TEST=true ./scripts/publish.sh
+
+publish: clean
+	./scripts/publish.sh
 
 .PHONY: install clean
