@@ -33,4 +33,7 @@ create-tag:
 publish-test:
 	./scripts/publish-test.sh
 
+publish:
+	./scripts/publish.sh
+
 .PHONY: install clean
