@@ -16,7 +16,7 @@ check_dependencies() {
     fi
 }
 
-check_app_version() {
+check_and_set_app_version() {
     # Ensure the package version is set correctly
     echo "🔍 Checking package version..."
     if [ ! -f ".app-version" ]; then
@@ -24,12 +24,21 @@ check_app_version() {
         echo "Please create a .app-version file with the version number before publishing."
         exit 1
     fi
+#    set app-version in a global variable
+    VERSION=$(cat ".app-version" | tr -d '\n' | tr -d ' ')
+}
+
+display_package_info() {
+    if [[ "$PUBLISH_TEST" == "true" ]]; then
+        echo "🚀 Publishing udown v$VERSION package to TestPyPI..."
+    else
+        echo "🚀 Publishing udown v$VERSION package to PyPI..."
+    fi
 }
 
 check_tag_exists_in_origin() {
     # Check if corresponding tag exists on origin
     echo "🏷️  Checking if tag exists on origin..."
-    VERSION=$(cat ".app-version" | tr -d '\n' | tr -d ' ')
     if [[ ! "$VERSION" =~ ^v ]]; then
         TAG_NAME="v$VERSION"
     else
@@ -148,13 +157,13 @@ publish_package() {
 
 check_prerequisites() {
     check_dependencies
-    check_app_version
+    check_and_set_app_version
+    display_package_info
     check_tag_exists_in_origin
     check_build
 }
 
 main() {
-    echo "🚀 Publishing udown package to PyPI..."
     check_prerequisites
     take_confirmation
     publish_package
